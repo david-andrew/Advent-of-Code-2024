@@ -1,0 +1,8 @@
+
+# autoenv files
+.autoenv
+.autoleave
+
+
+# python stuff
+__pycache__/

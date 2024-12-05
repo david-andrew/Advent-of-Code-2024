@@ -1,0 +1,66 @@
+#main = () => {
+    part_1
+    part_2
+}
+
+
+get_data = () => {
+    lines = p'input'.read_text.strip.split'\n'
+    [left right] = [
+        loop line in lines
+            line.split .|> int
+    ]`
+    [left right]
+}
+
+
+part_1 = () => {
+    [left right] = get_data
+    left = sort(left)
+    right = sort(right)
+    (left .- right) .|> abs |> sum |> printl
+}
+
+
+part_2 = () => {
+    left_counts = dict[]
+    right_counts = dict[]
+    [left right] = get_data
+    loop l in left
+        left_counts[l] = left_counts[l] ?? 0 + 1
+    loop r in right
+        right_counts[r] = right_counts[r] ?? 0 + 1
+    
+    sum = 0
+    loop [k v] in left_counts
+        sum += k * (right_counts[k] ?? 0) * v
+    
+    sum |> printl
+}
+
+
+
+
+
+/{
+Features to fix:
+- range with a variable as the range bound (so we can replace the while loop with a for loop)
+- being able to assign into an array at index
+- able to read in input from a file
+- need a sort function
+}/
+
+// let bubble_sort = (arr len) => {
+//     loop i in 0..len
+//         loop j in 0..len-i-1
+//             if arr[j] >? arr[j + 1] {
+//                 let temp = arr[j]
+//                 arr[j] = arr[j + 1]
+//                 arr[j + 1] = temp
+//             }
+// }
+// 
+// printl(bubble_sort([64 34 25 12 22 11 90] 7)) // [11 12 22 25 34 64 90]
+
+
+// assert sort() exists
