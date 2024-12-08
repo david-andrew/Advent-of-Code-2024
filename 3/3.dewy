@@ -1,0 +1,108 @@
+#main = () => {
+    part_1
+    part_2
+}
+
+
+get_data = () :> str => p'input'.read_text
+
+part_1 = () => {
+    data = get_data
+    total = [
+        loop true { 
+            data = discard_up_to("mul" data)
+            if data =? undefined { break }
+            _, data = eat_substring("mul" data)
+            _, data = eat_substring("(" data)
+            left, data = eat_int(data)
+            _, data = eat_substring("," data)
+            right, data = eat_int(data)
+            _, data = eat_substring(")" data)
+            if left not =? undefined and right not =? undefined {
+                left * right
+            }
+        }
+    ] |> sum
+    printl(total)
+}
+
+
+discard_up_to = (sub: str data: str|undefined) :> str|undefined => {
+    // undefined propagation handled correctly here
+    // don't need:
+    //     if data =? undefined return undefined
+    //     if idx =? undefined return undefined
+    idx = data.index(sub)
+    data[idx..]
+}
+
+
+eat_substring = (sub: str data: str) :> [str str] | undefined => {
+    l = sub.len
+    if data.startswith(sub) [data[..l) data[l..]] else undefined
+}
+
+
+eat_int = (data: str) :> [int str] | undefined => {
+    i = 0
+    loop data[i].isdigit i += 1
+    if i = 0 undefined else [int(data[..i) data[i..]]
+}
+
+
+part_2 = () => {
+    data = get_data
+    total = 0
+    do_next = true
+    loop true {
+        task = next_thing(data)
+        if task =? undefined { break }
+        if task = "mul" {
+            data = discard_up_to("mul" data)
+            _, data = eat_substring("mul" data)
+            _, data = eat_substring("(" data)
+            left, data = eat_int(data)
+            _, data = eat_substring("," data)
+            right, data = eat_int(data)
+            _, data = eat_substring(")" data)
+            if do_next {
+                total += left * right
+            }
+        } elif task = "do" {
+            data = discard_up_to("do()" data)
+            _, data = eat_substring("do()" data)
+            do_next = true
+        } elif task = "dont" {
+            data = discard_up_to("don't()" data)
+            _, data = eat_substring("don't()" data)
+            do_next = false
+        } else {
+            // this should be unreachable
+            printl("INTERNAL ERROR: Unknown task '{task}'")
+        }
+    }
+    printl(total)
+}
+
+
+next_thing = (data: str) :> str | undefined => {
+    next_mul = idx_of_substring("mul" data)
+    next_do = idx_of_substring("do()" data)
+    next_dont = idx_of_substring("don't()" data)
+    idxs = [
+        ['mul' next_mul]
+        ['do' next_do]
+        ['dont' next_dont]
+    ]
+    idxs = idxs[idxs .not=? undefined]
+    if idxs.len = 0 undefined else {
+        idxs.sort(key = x => x[1])
+        idxs[0][0]
+    }
+}
+
+
+idx_of_substring = <T>(sub:str data:str fail:T=undefined) :> int | T => {
+    data.index(sub) ?? fail
+}
+
