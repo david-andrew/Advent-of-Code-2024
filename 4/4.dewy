@@ -1,0 +1,42 @@
+#main = () => {
+    part_1
+    part_2
+}
+
+get_data = () :> array<chr dim=2> => {
+    data = p'input'.read_text.splitlines
+    data = data.pad(1 '.')
+}
+
+part_1 = () => {
+    data = get_data
+    target = 'XMAS'
+    total = [
+        loop i in 0.. and row in data
+            loop j in 0.. and _ in row
+                count_at_pos(data i j target)
+    ] |> sum
+    printl(total)
+}
+
+count_at_pos = (data: array<chr dim=2> i:int j:int target:str) :> int => {
+    dydx = [
+        [0 1]   # right
+        [1 1]   # down right
+        [1 0]   # down
+        [1 -1]  # down left
+        [0 -1]  # left
+        [-1 -1] # up left
+        [-1 0]  # up
+        [-1 1]  # up right
+    ]
+    total = [
+        loop [dy dx] in dydx
+            [loop target_c in target and y in i,i+dy.. and x in j,j+dx..
+                if data[y x] not=? target_c
+                    break
+                1
+            ] |> sum =? target.len
+    ] |> sum
+    total
+}

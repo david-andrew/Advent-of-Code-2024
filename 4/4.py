@@ -47,11 +47,10 @@ def count_at_pos(data: list[list[str]], i: int, j: int, target: str) -> int:
 
 
 # found: set[str] = set()
-
 def part_2():
     data = get_data()
     data = np.array(data)
-    data = np.pad(data, (1,1), constant_values=('.', '.'))
+    data = np.pad(data, 1, constant_values='.')
     count = 0
     for i, row in enumerate(data):
         for j, c in enumerate(row):
