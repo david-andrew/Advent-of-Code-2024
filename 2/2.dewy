@@ -1,0 +1,80 @@
+
+#main = () => {
+    part_1
+    part_2
+}
+
+
+get_data = () :> array<array<int>> => {
+    lines = p'input'.read_text.strip.splitlines
+    lines = [loop l in lines [loop n in l.split int(n)]]
+    lines
+}
+
+is_safe = (report: array<int>) :> bool => {
+    diff = report[1..] .- report[..end-1]
+    monotonic = (diff .>=? 0 |> all) or (diff .<=? 0 |> all)
+    min_diff = diff |> min |> abs
+    max_diff = diff |> max |> abs
+    monotonic and min_diff >=? 1 and max_diff <=? 3
+}
+
+
+part_1 = () => {
+    data = get_data
+    safe = data .|> is_safe |> sum
+    printl(safe)
+}
+
+
+is_safe_dampened = (report: array<int>) :> bool => {
+    // check if the report is already safe
+    if is_safe(report) return true
+
+    diff = report[1..] .- report[..end-1]
+    
+    // flip the sign so we only have to deal with positive numbers
+    if diff.mean |> sign <? 0 { 
+        report *= -1
+        diff = report[1..] .- report[..end-1]
+    }
+    num_increasing = diff .>? 0 |> sum
+    num_decreasing = diff .<? 0 |> sum
+
+    // more than 1 increasing and more than 1 decreasing means it's impossible to fix this report
+    if num_increasing >? 1 and num_decreasing >? 1 return false
+
+    idxs = diff .>? 3 |> where
+    
+    // more than 2 gaps of larger than 3 means it's impossible to fix this report
+    if idxs.len >? 1 return false
+
+    // if there's only one gap of larger than 3, try removing one of the two numbers there to fix the report
+    if idxs.len =? 1 {
+        idx = idxs[0]
+        if is_safe([report[..idx)... report(idx..]...]) return true
+        if is_safe([report[..idx+1)... report(idx+1..]...]) return true
+    }
+
+
+    // more than 2 gaps of less than 1 (i.e. not monotonic) means it's impossible to fix this report
+    idxs = diff .<? 1 |> where
+    if idxs.len >? 1 return false
+
+    // if there's only one gap of less than 1, try removing one of the two numbers there to fix the report
+    if idxs.len =? 1 {
+        idx = idxs[0]
+        if is_safe([report[..idx)... report(idx..]...]) return true
+        if is_safe([report[..idx+1)... report(idx+1..]...]) return true
+    }
+
+    // none of the above worked, so it's impossible to fix this report
+    false
+}
+
+
+part_2 = () => {
+    data = get_data
+    safe = data .|> is_safe_dampened |> sum
+    printl(safe)
+}
