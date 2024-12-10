@@ -104,7 +104,7 @@ def fix_update(update: Update, rules: list[Rule]) -> Update:
         return canonical_order
 
     # otherwise sort the update based on the canonical order
-    pdb.set_trace()
+    raise ValueError("Shouldn't be possible to get here unless the rules don't address all elements, in which case the below code isn't correct")
     update_set = set(update)
     fixed_update = [i for i in canonical_order if i in update_set]
     return fixed_update
