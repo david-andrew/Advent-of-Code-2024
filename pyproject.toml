@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "scripts"
+version = "0.1.0"
+description = ""
+authors = ["David Samson <david.andrew.engineer@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.13"
+numpy = "^2.2.0"
+torch = "^2.5.1"
+tqdm = "^4.67.1"
+
+[tool.poetry.scripts]
+aoc_new = "scripts.aoc_new:main"
+
+[tool.poetry.group.dev.dependencies]
+requests = "^2.32.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
