@@ -23,11 +23,11 @@ def part_1():
             for dy, dx in [(0, 1), (0, -1), (1, 0), (-1, 0)]
         ])
 
-        # remove out of bounds
-        neighbors = neighbors[
-            (neighbors[:, 0] >= 0) & (neighbors[:, 0] < data.shape[0]) &
-            (neighbors[:, 1] >= 0) & (neighbors[:, 1] < data.shape[1])
-        ]
+        # # remove out of bounds. Not necessary since we padded the data
+        # neighbors = neighbors[
+        #     (neighbors[:, 0] >= 0) & (neighbors[:, 0] < data.shape[0]) &
+        #     (neighbors[:, 1] >= 0) & (neighbors[:, 1] < data.shape[1])
+        # ]
 
         # count up the number of neighbors that are not part of the region
         perimeter = (regions[*neighbors.T] != i).sum()
@@ -68,6 +68,34 @@ def pad_and_flood_fill(data: np.ndarray) -> np.ndarray:
 
 def part_2():
     data = get_input()
+    data, regions = pad_and_flood_fill(data)
+    for i in range(1, regions.max() + 1):
+        region = (regions == i)
+        area = region.sum()
+
+        pts = np.argwhere(region)
+
+        # collect all points with at least one empty neighbor
+        neighbors = np.concatenate([
+            pts + [dy, dx]
+            for dy, dx in [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        ])
+        idxs = np.concatenate([np.arange(len(pts)) for _ in range(4)]).T
+
+        is_filled_neighbor = region[*neighbors.T]
+        idxs = idxs[~is_filled_neighbor]
+        idxs = np.unique(idxs)
+
+        candidate_start_points = pts[idxs]
+        traced_regions = np.zeros_like(region, dtype=bool)
+
+        # find all regions: 1 outside, and 0 or more inside the current region
+        # take a candidate start point that is touching a region not yet traced
+        # trace around keeping the right hand on the wall until you return to the start
+        # while tracing, count the number of times the direction changes. This is the number of edges
+        
+        pdb.set_trace()
+
     pdb.set_trace()
 
 
