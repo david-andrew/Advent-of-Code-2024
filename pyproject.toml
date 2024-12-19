@@ -10,6 +10,10 @@ numpy = "^2.2.0"
 torch = "^2.5.1"
 tqdm = "^4.67.1"
 matplotlib = "^3.10.0"
+scipy = "^1.14.1"
+nevergrad = "^1.0.8"
+pip = "^24.3.1"
+opencv-python = "^4.10.0.84"
 
 [tool.poetry.scripts]
 aoc_new = "scripts.aoc_new:main"
